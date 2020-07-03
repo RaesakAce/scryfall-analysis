@@ -30,7 +30,7 @@ useful_columns=['id'
 ,'power'
 , 'toughness']
 print(data['edhrec_rank'])
-print(type(data['prices']))
+print(data['prices'][0]['eur'])
 print(data.columns)
-sb.barplot(x="edhrec_rank",data=data);
+#sb.barplot(x="edhrec_rank",data=data);
 gui.alert('everything was printed')
