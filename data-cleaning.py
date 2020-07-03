@@ -1,6 +1,8 @@
 import pandas as pd
 import seaborn as sb
 import pyautogui as gui
+import matplotlib.pyplot as plt
+sb.set(style="whitegrid")
 
 data_path='.\data\oracle-cards-20200629050643.json'
 data=pd.read_json(data_path)
@@ -29,8 +31,14 @@ useful_columns=['id'
 , 'textless'
 ,'power'
 , 'toughness']
-print(data['edhrec_rank'])
-print(data['prices'][0]['eur'])
-print(data.columns)
-#sb.barplot(x="edhrec_rank",data=data);
-gui.alert('everything was printed')
+
+keys=['usd','usd_foil','eur','tix']
+
+data_copy = data
+
+for val in keys:
+    data_copy[val] = pd.Series([price[val] for price in data_copy['prices']])
+data_copy.to_csv('.\data\oracle-cards-clean.csv')
+
+sb.relplot(x="usd", y="eur",sizes=(400, 400), alpha=.5, height=6, data=data_copy)
+plt.show()
