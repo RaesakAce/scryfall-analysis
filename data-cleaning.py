@@ -1,7 +1,10 @@
+import os
+import re
 import pandas as pd
 import seaborn as sb
 import pyautogui as gui
 import matplotlib.pyplot as plt
+
 sb.set(style="whitegrid")
 
 data_path='.\data\oracle-cards-20200629050643.json'
@@ -30,15 +33,21 @@ useful_columns=['id'
 , 'full_art'
 , 'textless'
 ,'power'
-, 'toughness']
+, 'toughness'
+,'prices'
+,'edhrec_rank']
 
 keys=['usd','usd_foil','eur','tix']
 
-data_copy = data
+clean = data[useful_columns].copy()
+
+tokens = [num for num in range(21634) if type(clean['colors'][num]) is not list]
+print(tokens)
 
 for val in keys:
-    data_copy[val] = pd.Series([price[val] for price in data_copy['prices']])
-data_copy.to_csv('.\data\oracle-cards-clean.csv')
+    clean[val] = pd.Series([price[val] for price in clean['prices']])
 
-sb.relplot(x="usd", y="eur",sizes=(400, 400), alpha=.5, height=6, data=data_copy)
+clean.to_json('.\data\oracle-cards-clean.json')
+
+sb.relplot(x="usd", y="eur",sizes=(0.4, 0.4), alpha=.5, height=6, data=clean)
 plt.show()
