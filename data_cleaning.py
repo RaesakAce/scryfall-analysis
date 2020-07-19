@@ -3,7 +3,7 @@ import re
 import pandas as pd
 
 
-class dataCleaning:
+class dataCleaning():
     
     def data_clean(data_path):
         #Read with pandas the raw json data and put it in a dataFrame
