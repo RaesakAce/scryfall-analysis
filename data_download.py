@@ -1,7 +1,7 @@
 import urllib3
 import pandas as pd
 
-class dataDownload:
+class dataDownload():
     def api_request():
         urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
         http = urllib3.PoolManager()
