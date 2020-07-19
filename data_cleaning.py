@@ -6,8 +6,11 @@ import pandas as pd
 class dataCleaning:
     
     def data_clean(data_path):
+        #Read with pandas the raw json data and put it in a dataFrame
         data=pd.read_json(data_path)
+        #Select the columns which I want to keep in the dataFrame
         useful_columns=['id'
+        ,'layout'
         ,'name'
         ,'mana_cost'
         ,'cmc'
@@ -33,16 +36,22 @@ class dataCleaning:
         ,'prices'
         ,'edhrec_rank']
 
-        keys=['usd','usd_foil','eur','tix']
-
+        #Copy only the part that I'm interested in of the df
         clean = data[useful_columns].copy()
 
-        tokens = [num for num in range(21634) if type(clean['colors'][num]) is not list]
-        print(tokens)
-
+        #'prices' is a dictionary, I want to separate in different columns the values
+        keys=['usd','usd_foil','eur','tix']
         for val in keys:
             clean[val] = pd.Series([price[val] for price in clean['prices']])
 
+        #with a condition the dataFrame gets rid of cards that
+        #due to strange layout would be difficult or meaningless to analyze
+        clean = clean[clean.layout == 'normal']
+
+        #drop useless columns
+        clean=clean.drop(columns=['layout','prices'])
+
+        #Then I save the clean json file
         clean.to_json('.\data\oracle-cards-clean.json')
 
     if (__name__ == '__main__') :
