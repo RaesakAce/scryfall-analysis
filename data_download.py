@@ -5,17 +5,22 @@ import time
 
 class dataDownload():
     def api_request():
+        print('requesting...')
         urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
         http = urllib3.PoolManager()
         r = http.request('GET','https://api.scryfall.com/bulk-data')
         if (r.status == 200):
+            print('accessing API')
             uri_data = pd.read_json(r.data)['data'][0]['download_uri']
             r = http.request('GET',uri_data)
+            print('request succesful!')
         return r
     
     def save_json(r,data_path):
         if (r.status == 200):
+            print('saving raw data...')
             pd.read_json(r.data).to_json(data_path)
+            print ('raw data saved!')
     
     def update(data_path):
         last_update=(time.time()-os.stat(data_path).st_mtime)/3600

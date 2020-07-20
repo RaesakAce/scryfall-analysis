@@ -6,6 +6,8 @@ import pandas as pd
 class dataCleaning():
     
     def data_clean(data_path):
+        print ('begin cleaning')
+        clean_path='.\data\oracle-cards-clean.json'
         #Read with pandas the raw json data and put it in a dataFrame
         data=pd.read_json(data_path)
         #Select the columns which I want to keep in the dataFrame
@@ -50,9 +52,11 @@ class dataCleaning():
 
         #drop useless columns
         clean=clean.drop(columns=['layout','prices'])
+        print('saving clean data')
 
         #Then I save the clean json file
-        clean.to_json('.\data\oracle-cards-clean.json')
+        clean.to_json(clean_path)
+        return clean_path
 
     if (__name__ == '__main__') :
         data_path='.\data\oracle-cards.json'
