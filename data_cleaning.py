@@ -4,7 +4,6 @@ import pandas as pd
 
 
 class dataCleaning():
-    
     def data_clean(data_path):
         print ('begin cleaning')
         clean_path='.\data\oracle-cards-clean.json'
@@ -60,4 +59,3 @@ class dataCleaning():
 
     if (__name__ == '__main__') :
         data_path='.\data\oracle-cards.json'
-        data_clean(data_path)
