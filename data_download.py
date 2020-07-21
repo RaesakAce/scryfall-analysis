@@ -42,18 +42,27 @@ class dataDownload():
         #Select the columns which I want to keep in the dataFrame
         useful_columns=['image_uris','artist']
         #Copy only the part that I'm interested in of the df
+
         imgs = imgs[useful_columns]
+        img_list=[]
+        for i in imgs['image_uris'].index:
+            if type(imgs['image_uris'][i]) == type({}):
+                img_list.append(imgs['image_uris'][i]['art_crop'])
+            else:
+                img_list.append(i)
+        imgs['art_crop'] = pd.Series(img_list) 
+
         imgs = imgs[imgs.image_uris.map(type) ==  type({})]
-        #imgs['image_uri'] = pd.Series([url['art_crop'] for url in imgs['image_uris']])
+
         #Then I save the img json file
         imgs.to_json(data_path)
-        '''#now I download the img files
+        #now I download the img files
         urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
         http = urllib3.PoolManager()
-        for i in imgs['image_uris'].index[:26275]:
-            r = http.request('GET',imgs['image_uris'][i])
+        for i in imgs['art_crop'].index:
+            r = http.request('GET',imgs['art_crop'][i])
             img = Image.open(io.BytesIO(r.data))
-            img.save(f'{img_path}\{i}.jpg')'''
+            img.save(f'{img_path}\{i}.jpg')
         return img_path
 
     def images(data_path,data_type):

@@ -24,14 +24,6 @@ print('data cleaned')
 
 data=pd.read_json(clean_path)
 
-#devo lavorare su questa roba perchè non funziona
-imgs=pd.read_json(image_path)
-keys=['art_crop','normal','large','png','small','border_crop']
-val=keys[0]
-imgs[val] = pd.Series([imgs['image_uris'][i][val] for i in imgs['image_uris'].index])
-
-print(imgs['art_crop'][74])
-print(imgs['image_uris'][74]['art_crop'])
 print ('data in dataframe')
 
 sb.relplot(x='edhrec_rank',y='eur',hue='reserved',size='cmc',size_norm=(0,10),data=data)
