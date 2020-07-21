@@ -11,7 +11,7 @@ import io
 
 data_path='.\data\oracle-cards.json'
 image_path='.\data\images.json'
-img_path='..\images'
+img_path='..\data_images'
 download.update(data_path,'bulk')
 print('data updated')
 

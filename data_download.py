@@ -37,7 +37,7 @@ class dataDownload():
         
     
     def save_images(r,data_path):
-        img_path='..\images'
+        img_path='..\data_images'
         imgs=pd.read_json(r.data)
         #Select the columns which I want to keep in the dataFrame
         useful_columns=['image_uris','artist']
