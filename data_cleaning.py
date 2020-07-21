@@ -50,7 +50,7 @@ class dataCleaning():
         clean = clean[clean.layout == 'normal']
 
         #drop useless columns
-        clean=clean.drop(columns=['layout','prices'])
+        #clean=clean.drop(columns=['layout','prices'])
         print('saving clean data')
 
         #Then I save the clean json file
