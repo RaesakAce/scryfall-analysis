@@ -7,6 +7,7 @@ from tensorflow.keras.layers import UpSampling2D, Conv2D
 from tensorflow.keras.models import Sequential, Model, load_model
 from tensorflow.keras.optimizers import Adam
 from image_prep import image_prep
+from gan import dcgan
 import numpy as np
 from PIL import Image
 from tqdm import tqdm
@@ -20,8 +21,8 @@ class train():
         discriminator_optimizer = tf.keras.optimizers.Adam(1.5e-4,0.5)
 
     @tf.function
-    def train_step(images):
-        seed = tf.random.normal([BATCH_SIZE, SEED_SIZE])
+    def train_step(images,batch_size = 32,seed_size=100):
+        seed = tf.random.normal([batch_size, seed_size])
 
         with tf.GradientTape() as gen_tape, tf.GradientTape() as disc_tape:
             generated_images = generator(seed, training=True)
@@ -40,8 +41,8 @@ class train():
             discriminator_optimizer.apply_gradients(zip(gradients_of_discriminator, discriminator.trainable_variables))
         return gen_loss,disc_loss
 
-    def train(dataset, epochs):
-        fixed_seed = np.random.normal(0, 1, (PREVIEW_ROWS * PREVIEW_COLS, SEED_SIZE))
+    def train(dataset, epochs = 10000,rows = 4,cols = 7,seed_size=100):
+        fixed_seed = np.random.normal(0, 1, (rows * cols, seed_size))
         start = time.time()
 
         for epoch in range(epochs):
@@ -60,8 +61,8 @@ class train():
 
             epoch_elapsed = time.time()-epoch_start
             print (f'Epoch {epoch+1}, gen loss={g_loss},disc loss={d_loss},'\
-                ' {image_prep.hms_string(epoch_elapsed)}')
-            save_images(epoch,fixed_seed)
+                   ' {image_prep.hms_string(epoch_elapsed)}')
+            dcgan.save_images(epoch,fixed_seed)
 
         elapsed = time.time()-start
         print (f'Training time: {image_prep.hms_string(elapsed)}')

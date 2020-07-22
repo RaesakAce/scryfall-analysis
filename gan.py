@@ -14,7 +14,7 @@ import time
 import matplotlib.pyplot as plt
 
 class dcgan ():
-    def build_generator(seed_size, channels):
+    def build_generator(seed_size, channels,generate_res):
         model = Sequential()
 
         model.add(Dense(4*4*256,activation="relu",input_dim=seed_size))
@@ -36,8 +36,8 @@ class dcgan ():
         model.add(BatchNormalization(momentum=0.8))
         model.add(Activation("relu"))
 
-        if GENERATE_RES>1:
-            model.add(UpSampling2D(size=(GENERATE_RES,GENERATE_RES)))
+        if generate_res>1:
+            model.add(UpSampling2D(size=(generate_res,generate_res)))
             model.add(Conv2D(128,kernel_size=3,padding="same"))
             model.add(BatchNormalization(momentum=0.8))
             model.add(Activation("relu"))
@@ -83,10 +83,11 @@ class dcgan ():
 
         return model
 
-    def save_images(cnt,noise):
+    def save_images(cnt,noise, generate_res = 2, rows = 4 , cols = 7, margin = 16):
+        gen_square = 32 * generate_res
         image_array = np.full(( 
-            PREVIEW_MARGIN + (PREVIEW_ROWS * (GENERATE_SQUARE+PREVIEW_MARGIN)), 
-            PREVIEW_MARGIN + (PREVIEW_COLS * (GENERATE_SQUARE+PREVIEW_MARGIN)), 3), 
+            margin + (rows * (gen_square+margin)), 
+            margin + (cols* (gen_square+margin)), 3), 
             255, dtype=np.uint8)
   
         generated_images = generator.predict(noise)
@@ -94,11 +95,11 @@ class dcgan ():
         generated_images = 0.5 * generated_images + 0.5
 
         image_count = 0
-        for row in range(PREVIEW_ROWS):
-            for col in range(PREVIEW_COLS):
-                r = row * (GENERATE_SQUARE+16) + PREVIEW_MARGIN
-                c = col * (GENERATE_SQUARE+16) + PREVIEW_MARGIN
-                image_array[r:r+GENERATE_SQUARE,c:c+GENERATE_SQUARE] 
+        for row in range(rows):
+            for col in range(cols):
+                r = row * (gen_square+16) + margin
+                c = col * (gen_square+16) + margin
+                image_array[r:r+gen_square,c:c+gen_square] 
                     = generated_images[image_count] * 255
                 image_count += 1
 
