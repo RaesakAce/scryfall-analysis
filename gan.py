@@ -1,18 +1,123 @@
+import tensorflow as tf
+from tensorflow.keras.layers import Input, Reshape, Dropout, Dense 
+from tensorflow.keras.layers import Flatten, BatchNormalization
+from tensorflow.keras.layers import Activation, ZeroPadding2D
+from tensorflow.keras.layers import LeakyReLU
+from tensorflow.keras.layers import UpSampling2D, Conv2D
+from tensorflow.keras.models import Sequential, Model, load_model
+from tensorflow.keras.optimizers import Adam
 import numpy as np
-import os
-from sklearn.model_selection import train_test_split
-from tensorflow.python.keras.preprocessing.image import load_img, img_to_array
-from tensorflow.python import keras
-from tensorflow.python.keras.models import Sequential
-from tensorflow.python.keras.layers import Dense, Flatten, Conv2D, Dropout
-from os.path import join
+from PIL import Image
+from tqdm import tqdm
+import os 
+import time
+import matplotlib.pyplot as plt
 
-image_dir = './data/images/'
-img_paths = [join(image_dir, filename) for filename in os.listdir()
-image_size = 224
+class dcgan ():
+    def build_generator(seed_size, channels):
+        model = Sequential()
 
-def read_and_prep_images(img_paths, img_height=image_size, img_width=image_size):
-    imgs = [load_img(img_path, target_size=(img_height, img_width)) for img_path in img_paths]
-    img_array = np.array([img_to_array(img) for img in imgs])
-    output = preprocess_input(img_array)
-    return(output)
+        model.add(Dense(4*4*256,activation="relu",input_dim=seed_size))
+        model.add(Reshape((4,4,256)))
+
+        model.add(UpSampling2D())
+        model.add(Conv2D(256,kernel_size=3,padding="same"))
+        model.add(BatchNormalization(momentum=0.8))
+        model.add(Activation("relu"))
+
+        model.add(UpSampling2D())
+        model.add(Conv2D(256,kernel_size=3,padding="same"))
+        model.add(BatchNormalization(momentum=0.8))
+        model.add(Activation("relu"))
+   
+        # Output resolution, additional upsampling
+        model.add(UpSampling2D())
+        model.add(Conv2D(128,kernel_size=3,padding="same"))
+        model.add(BatchNormalization(momentum=0.8))
+        model.add(Activation("relu"))
+
+        if GENERATE_RES>1:
+            model.add(UpSampling2D(size=(GENERATE_RES,GENERATE_RES)))
+            model.add(Conv2D(128,kernel_size=3,padding="same"))
+            model.add(BatchNormalization(momentum=0.8))
+            model.add(Activation("relu"))
+
+        # Final CNN layer
+        model.add(Conv2D(channels,kernel_size=3,padding="same"))
+        model.add(Activation("tanh"))
+
+        return model
+
+
+    def build_discriminator(image_shape):
+        model = Sequential()
+
+        model.add(Conv2D(32, kernel_size=3, strides=2, input_shape=image_shape, 
+                        padding="same"))
+        model.add(LeakyReLU(alpha=0.2))
+
+        model.add(Dropout(0.25))
+        model.add(Conv2D(64, kernel_size=3, strides=2, padding="same"))
+        model.add(ZeroPadding2D(padding=((0,1),(0,1))))
+        model.add(BatchNormalization(momentum=0.8))
+        model.add(LeakyReLU(alpha=0.2))
+
+        model.add(Dropout(0.25))
+        model.add(Conv2D(128, kernel_size=3, strides=2, padding="same"))
+        model.add(BatchNormalization(momentum=0.8))
+        model.add(LeakyReLU(alpha=0.2))
+
+        model.add(Dropout(0.25))
+        model.add(Conv2D(256, kernel_size=3, strides=1, padding="same"))
+        model.add(BatchNormalization(momentum=0.8))
+        model.add(LeakyReLU(alpha=0.2))
+
+        model.add(Dropout(0.25))
+        model.add(Conv2D(512, kernel_size=3, strides=1, padding="same"))
+        model.add(BatchNormalization(momentum=0.8))
+        model.add(LeakyReLU(alpha=0.2))
+
+        model.add(Dropout(0.25))
+        model.add(Flatten())
+        model.add(Dense(1, activation='sigmoid'))
+
+        return model
+
+    def save_images(cnt,noise):
+        image_array = np.full(( 
+            PREVIEW_MARGIN + (PREVIEW_ROWS * (GENERATE_SQUARE+PREVIEW_MARGIN)), 
+            PREVIEW_MARGIN + (PREVIEW_COLS * (GENERATE_SQUARE+PREVIEW_MARGIN)), 3), 
+            255, dtype=np.uint8)
+  
+        generated_images = generator.predict(noise)
+
+        generated_images = 0.5 * generated_images + 0.5
+
+        image_count = 0
+        for row in range(PREVIEW_ROWS):
+            for col in range(PREVIEW_COLS):
+                r = row * (GENERATE_SQUARE+16) + PREVIEW_MARGIN
+                c = col * (GENERATE_SQUARE+16) + PREVIEW_MARGIN
+                image_array[r:r+GENERATE_SQUARE,c:c+GENERATE_SQUARE] 
+                    = generated_images[image_count] * 255
+                image_count += 1
+
+          
+        output_path = os.path.join(DATA_PATH,'output')
+        if not os.path.exists(output_path):
+            os.makedirs(output_path)
+  
+        filename = os.path.join(output_path,f"train-{cnt}.png")
+        im = Image.fromarray(image_array)
+        im.save(filename)
+
+    def discriminator_loss(real_output, fake_output):
+        cross_entropy = tf.keras.losses.BinaryCrossentropy(from_logits=True)
+        real_loss = cross_entropy(tf.ones_like(real_output), real_output)
+        fake_loss = cross_entropy(tf.zeros_like(fake_output), fake_output)
+        total_loss = real_loss + fake_loss
+        return total_loss
+
+    def generator_loss(fake_output):
+        cross_entropy = tf.keras.losses.BinaryCrossentropy(from_logits=True)
+        return cross_entropy(tf.ones_like(fake_output), fake_output)  

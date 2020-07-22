@@ -5,8 +5,11 @@ import pandas as pd
 
 class dataCleaning():
     def data_clean(data_path):
-        print ('begin cleaning')
         clean_path='.\data\oracle-cards-clean.json'
+        if os.path.isfile(clean_path):
+            print('data already cleaned')
+            return clean_path
+        print ('begin cleaning')
         #Read with pandas the raw json data and put it in a dataFrame
         data=pd.read_json(data_path)
         #Select the columns which I want to keep in the dataFrame
