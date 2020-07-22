@@ -34,7 +34,7 @@ class image_prep():
             print("Saving training image binary...")
             np.save(training_binary_path,training_data)
             elapsed = time.time()-start
-            print (f'Image preprocess time: {hms_string(elapsed)}')
+            print (f'Image preprocess time: {image_prep.hms_string(elapsed)}')
         else:
             print("Loading previous training data...")
             training_data = np.load(training_binary_path)
