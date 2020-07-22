@@ -1,6 +1,5 @@
 from data_cleaning import dataCleaning as clean
 from data_download import dataDownload as download
-import tensorflow as tf
 import urllib3
 import numpy
 import pandas as pd
@@ -8,9 +7,6 @@ import seaborn as sb
 import matplotlib.pyplot as plt
 from PIL import Image
 import io
-from train import train
-from gan import dcgan
-from image_prep import image_prep
 import os
 
 data_path='.\data\oracle-cards.json'
@@ -30,22 +26,3 @@ print('data cleaned')
 data=pd.read_json(clean_path)
 
 print ('data in dataframe')
-generate_res=2
-channels=3
-seed_size=100
-epochs=10000
-train_dataset=image_prep.preprocess_image()
-generator = dcgan.build_generator(seed_size, channels)
-
-noise = tf.random.normal([1, seed_size])
-generated_image = generator(noise, training=False)
-
-plt.imshow(generated_image[0, :, :, 0])
-gen_square = 32 * generate_res
-image_shape = (gen_square,gen_square,channels)
-
-discriminator = dcgan.build_discriminator(image_shape)
-decision = discriminator(generated_image)
-print (decision)
-train(train_dataset, epochs)
-generator.save(os.path.join(img_path,"face_generator.h5"))

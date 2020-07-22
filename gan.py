@@ -14,7 +14,7 @@ import time
 import matplotlib.pyplot as plt
 
 class dcgan ():
-    def build_generator(seed_size, channels,generate_res):
+    def build_generator(seed_size, channels,generate_res=2):
         model = Sequential()
 
         model.add(Dense(4*4*256,activation="relu",input_dim=seed_size))
