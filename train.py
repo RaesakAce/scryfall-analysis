@@ -31,12 +31,15 @@ image_shape = (gen_square,gen_square,channels)
 
 discriminator = dcgan.build_discriminator(image_shape)
 decision = discriminator(generated_image)
+
 print (decision)
+
+generator_optimizer = tf.keras.optimizers.Adam(1.5e-4,0.5)
+discriminator_optimizer = tf.keras.optimizers.Adam(1.5e-4,0.5)
 
 @tf.function
 def train_step(images,batch_size = 32,seed_size=100):
-    generator_optimizer = tf.keras.optimizers.Adam(1.5e-4,0.5)
-    discriminator_optimizer = tf.keras.optimizers.Adam(1.5e-4,0.5)
+    
     seed = tf.random.normal([batch_size, seed_size])
 
     with tf.GradientTape() as gen_tape, tf.GradientTape() as disc_tape:
@@ -70,7 +73,7 @@ def train(dataset,epochs = 10000,rows = 4,cols = 7,seed_size=100):
         disc_loss_list = []
 
         for image_batch in dataset:
-            t = train.train_step(image_batch)
+            t = train_step(image_batch)
             gen_loss_list.append(t[0])
             disc_loss_list.append(t[1])
 
