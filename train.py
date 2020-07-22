@@ -16,22 +16,21 @@ import time
 import matplotlib.pyplot as plt
 
 class train():
-    def optimizer():
-        generator_optimizer = tf.keras.optimizers.Adam(1.5e-4,0.5)
-        discriminator_optimizer = tf.keras.optimizers.Adam(1.5e-4,0.5)
 
     @tf.function
     def train_step(images,batch_size = 32,seed_size=100):
+        generator_optimizer = tf.keras.optimizers.Adam(1.5e-4,0.5)
+        discriminator_optimizer = tf.keras.optimizers.Adam(1.5e-4,0.5)
         seed = tf.random.normal([batch_size, seed_size])
 
         with tf.GradientTape() as gen_tape, tf.GradientTape() as disc_tape:
-            generated_images = generator(seed, training=True)
+            generated_images = dcgan.generator(seed, training=True)
 
-            real_output = discriminator(images, training=True)
-            fake_output = discriminator(generated_images, training=True)
+            real_output = dcgan.discriminator(images, training=True)
+            fake_output = dcgan.discriminator(generated_images, training=True)
 
-            gen_loss = generator_loss(fake_output)
-            disc_loss = discriminator_loss(real_output, fake_output)
+            gen_loss = dcgan.generator_loss(fake_output)
+            disc_loss = dcgan.discriminator_loss(real_output, fake_output)
     
 
             gradients_of_generator = gen_tape.gradient(gen_loss, generator.trainable_variables)
@@ -52,7 +51,7 @@ class train():
             disc_loss_list = []
 
             for image_batch in dataset:
-                t = train_step(image_batch)
+                t = train.train_step(image_batch)
                 gen_loss_list.append(t[0])
                 disc_loss_list.append(t[1])
 
@@ -60,8 +59,7 @@ class train():
             d_loss = sum(disc_loss_list) / len(disc_loss_list)
 
             epoch_elapsed = time.time()-epoch_start
-            print (f'Epoch {epoch+1}, gen loss={g_loss},disc loss={d_loss},'\
-                   ' {image_prep.hms_string(epoch_elapsed)}')
+            print (f'Epoch {epoch+1}, gen loss={g_loss},disc loss={d_loss}, {image_prep.hms_string(epoch_elapsed)}')
             dcgan.save_images(epoch,fixed_seed)
 
         elapsed = time.time()-start

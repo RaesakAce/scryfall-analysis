@@ -5,7 +5,6 @@ from tqdm import tqdm
 import os 
 import time
 import matplotlib.pyplot as plt
-rows = 4,cols = 7,margin = 16,freq = 100,
 
 class image_prep():
 
@@ -15,7 +14,7 @@ class image_prep():
         s = sec_elapsed % 60
         return "{}:{:>02}:{:>05.2f}".format(h, m, s)
 
-    def preprocess_image(generate_res = 2, channels = 3,   data_path='..\data_images'):
+    def preprocess_image(generate_res = 2, channels = 3,   data_path='..\data_images',buffer_size=60000,batch_size=32):
         gen_square = 32 * generate_res
         print(f'Generating {gen_square}px square images')
         training_binary_path = os.path.join(data_path,f'training_data_{gen_square}.np')
@@ -39,7 +38,7 @@ class image_prep():
         else:
             print("Loading previous training data...")
             training_data = np.load(training_binary_path)
-        train_dataset = tf.data.Dataset.from_tensor_slices(training_data).shuffle(BUFFER_SIZE).batch(BATCH_SIZE)
+        train_dataset = tf.data.Dataset.from_tensor_slices(training_data).shuffle(buffer_size).batch(batch_size)
         return train_dataset 
 
 if (__name__)==('__main__'):

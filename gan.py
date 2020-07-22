@@ -99,8 +99,7 @@ class dcgan ():
             for col in range(cols):
                 r = row * (gen_square+16) + margin
                 c = col * (gen_square+16) + margin
-                image_array[r:r+gen_square,c:c+gen_square] 
-                    = generated_images[image_count] * 255
+                image_array[r:r+gen_square,c:c+gen_square] = generated_images[image_count] * 255
                 image_count += 1
 
           

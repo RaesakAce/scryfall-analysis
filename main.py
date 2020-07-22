@@ -7,11 +7,15 @@ import seaborn as sb
 import matplotlib.pyplot as plt
 from PIL import Image
 import io
+from train import train
+from gan import dcgan
+from image_prep import image_prep
 
 
 data_path='.\data\oracle-cards.json'
 image_path='.\data\images.json'
 img_path='..\data_images\jpegs'
+
 download.update(data_path,'bulk')
 print('data updated')
 
@@ -26,5 +30,3 @@ data=pd.read_json(clean_path)
 
 print ('data in dataframe')
 
-sb.relplot(x='edhrec_rank',y='eur',hue='reserved',size='cmc',size_norm=(0,10),data=data)
-plt.show()
