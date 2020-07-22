@@ -103,7 +103,7 @@ class dcgan ():
                 image_count += 1
 
           
-        output_path = os.path.join(DATA_PATH,'output')
+        output_path = os.path.join(data_path,'output')
         if not os.path.exists(output_path):
             os.makedirs(output_path)
   
