@@ -129,7 +129,7 @@ def generator_loss(fake_output):
     cross_entropy = tf.keras.losses.BinaryCrossentropy(from_logits=True)
     return cross_entropy(tf.ones_like(fake_output), fake_output)  
 
-generator = dcgan.build_generator(seed_size, channels)
+generator = build_generator(seed_size, channels)
 
 noise = tf.random.normal([1, seed_size])
 generated_image = generator(noise, training=False)
@@ -138,7 +138,7 @@ plt.imshow(generated_image[0, :, :, 0])
 gen_square = 32 * generate_res
 image_shape = (gen_square,gen_square,channels)
 
-discriminator = dcgan.build_discriminator(image_shape)
+discriminator = build_discriminator(image_shape)
 decision = discriminator(generated_image)
 
 print (decision)
@@ -157,8 +157,8 @@ def train_step(images,batch_size = 32,seed_size=100):
         real_output = discriminator(images, training=True)
         fake_output = discriminator(generated_images, training=True)
 
-        gen_loss = dcgan.generator_loss(fake_output)
-        disc_loss = dcgan.discriminator_loss(real_output, fake_output)
+        gen_loss = generator_loss(fake_output)
+        disc_loss = discriminator_loss(real_output, fake_output)
     
 
         gradients_of_generator = gen_tape.gradient(gen_loss, generator.trainable_variables)
@@ -191,10 +191,10 @@ def train(dataset,epochs = 10000,rows = 4,cols = 7,seed_size=100):
 
         epoch_elapsed = time.time()-epoch_start
         print (f'Epoch {epoch+1}, gen loss={g_loss},disc loss={d_loss}, {image_prep.hms_string(epoch_elapsed)}')
-        dcgan.save_images(epoch,fixed_seed)
+        save_images(epoch,fixed_seed)
 
     elapsed = time.time()-start
     print (f'Training time: {image_prep.hms_string(elapsed)}')
 
 train(train_dataset)
-generator.save(os.path.join(img_path,"face_generator.h5"))
+generator.save(os.path.join(data_path,"face_generator.h5"))
