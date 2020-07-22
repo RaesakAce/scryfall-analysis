@@ -1,5 +1,6 @@
 from data_cleaning import dataCleaning as clean
 from data_download import dataDownload as download
+import tensorflow as tf
 import urllib3
 import numpy
 import pandas as pd
@@ -10,7 +11,7 @@ import io
 from train import train
 from gan import dcgan
 from image_prep import image_prep
-
+import os
 
 data_path='.\data\oracle-cards.json'
 image_path='.\data\images.json'
