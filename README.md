@@ -19,3 +19,7 @@ Use  NPL and a neural network to evaluate cards oracle text, comparing it with t
 Use a gradient boosted ML model to evaluate the structured numeric data of the cards.
 Normalize the oracle text scores. This works if we consider independent values for its evaluation the oracle text of a card and, for example, its strength.
 It mostly should be.
+
+
+Note, currently the main script only uses the properly implemented classes, that is DataDownload and DataCleaning. 
+The Neural Network part is being developed and will be available as a jupyter notbook, because it doesn't lend itself well to the class hierarchy, except for the image prepping.
