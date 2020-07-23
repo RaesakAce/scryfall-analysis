@@ -7,6 +7,7 @@ I'm using the scryfall API to automatize the process of getting bulk data from s
 Scryfall is a huge database which contains more than 20000 card objects from the Magic: The Gathering Trading card game.
 Is there a way to apply ML to evaluate a card?
 
+Furthermore I'm trying to use a keras deep convolutional GAN to generate images that look similar to the ones you would find in magic
 ### To do:
 Apply NPL to the oracle of cards. A great part of the value of a card is given by what the card "does"
 
