@@ -18,7 +18,7 @@ data_path='..\data_images'
 generate_res=2
 channels=3
 seed_size=100
-epochs=10000
+epochs=50
 train_dataset=image_prep.preprocess_image()
 
 
@@ -171,7 +171,7 @@ def train_step(images,batch_size = 32,seed_size=100):
     
 
 
-def train(dataset,epochs = 10000,rows = 4,cols = 7,seed_size=100):
+def train(dataset,epochs = 50,rows = 4,cols = 7,seed_size=100):
     fixed_seed = np.random.normal(0, 1, (rows * cols, seed_size))
     start = time.time()
 

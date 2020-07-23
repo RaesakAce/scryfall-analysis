@@ -18,7 +18,7 @@ import matplotlib.pyplot as plt
 generate_res=2
 channels=3
 seed_size=100
-epochs=10000
+epochs=50
 train_dataset=image_prep.preprocess_image()
 generator = dcgan.build_generator(seed_size, channels)
 
