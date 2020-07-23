@@ -14,10 +14,10 @@ class image_prep():
         s = sec_elapsed % 60
         return "{}:{:>02}:{:>05.2f}".format(h, m, s)
 
-    def preprocess_image(generate_res = 2, channels = 3,   data_path='..\data_images',buffer_size=60000,batch_size=32):
+    def preprocess_image(generate_res = 1, channels = 3,   data_path='..\data_images',buffer_size=60000,batch_size=32):
         gen_square = 32 * generate_res
         print(f'Generating {gen_square}px square images')
-        training_binary_path = os.path.join(data_path,f'training_data_{gen_square}.np')
+        training_binary_path = os.path.join(data_path,f'training_data_{gen_square}_{gen_square}.npy')
         if not os.path.isfile(training_binary_path):
             start = time.time()
             print("Loading training images...")
@@ -25,7 +25,10 @@ class image_prep():
             images_path = os.path.join(data_path,'jpegs')
             for filename in tqdm(os.listdir(images_path)):
                 path = os.path.join(images_path,filename)
-                image = Image.open(path).resize((gen_square,gen_square),Image.ANTIALIAS)
+                image = Image.open(path)
+                width, height = image.size
+                image = image.crop((height/1.363,0,height/1.363,0))
+                image = image.resize((gen_square,gen_square),Image.ANTIALIAS)
                 training_data.append(np.asarray(image))
             training_data = np.reshape(training_data,(-1,gen_square,gen_square,channels))
             training_data = training_data.astype(np.float32)
