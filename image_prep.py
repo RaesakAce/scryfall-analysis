@@ -41,7 +41,6 @@ class image_prep():
         else:
             print("Loading previous training data...")
             training_data = np.load(training_binary_path)
-        train_dataset = tf.data.Dataset.from_tensor_slices(training_data).shuffle(buffer_size).batch(batch_size)
         return train_dataset 
 
 if (__name__)==('__main__'):
