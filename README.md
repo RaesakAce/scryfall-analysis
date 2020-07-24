@@ -8,6 +8,8 @@ Scryfall is a huge database which contains more than 20000 card objects from the
 Is there a way to apply ML to evaluate a card?
 
 Furthermore I'm trying to use a keras deep convolutional GAN to generate images though, as expected, MTG images are too eterogeneous and at least with the machines I can use, I won't be able to train a GAN able to replicate them
+
+What I could be able to do is training a convolutional classifier.
 ### To do:
 Apply NPL to the oracle of cards. A great part of the value of a card is given by what the card "does"
 
